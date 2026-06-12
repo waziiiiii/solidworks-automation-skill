@@ -1,7 +1,7 @@
 interface:
-  display_name: "SolidWorks Automation"
-  short_description: "Automate SolidWorks CAD with Python COM"
-  default_prompt: "Use $solidworks-automation to create, edit, export, or troubleshoot SolidWorks CAD models with Python automation."
+  display_name: "AutoLife SolidWorks"
+  short_description: "SolidWorks CAD automation with mandatory robot-part complexity scoring before modeling."
+  default_prompt: "Use $autolife-solidwork-skill to score robot-part modeling complexity first, wait for user confirmation, then create, edit, export, or troubleshoot SolidWorks CAD models with the AutoLife-optimized Python COM workflow."
 
 policy:
   allow_implicit_invocation: true

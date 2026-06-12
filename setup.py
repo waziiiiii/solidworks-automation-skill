@@ -43,11 +43,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="solidworks-automation",
     version="1.2.0",
-    author="wzyn20051216",
+    author="AutoLifeRobot",
     description="Python automation toolkit for SolidWorks API",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/wzyn20051216/solidworks-automation-skill",
+    url="https://github.com/waziiiiii/solidworks-automation-skill",
     license="MIT",
     packages=["solidworks_automation"],
     package_dir={"solidworks_automation": "scripts"},

@@ -1,4 +1,4 @@
-# SolidWorks Automation Skill
+# AutoLife SolidWorks Skill
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
@@ -26,8 +26,22 @@
 - ⚡ **焊件设计** - 结构构件、切割清单
 - 📊 **FEA 仿真** - 静态分析、频率分析、热分析
 - 📝 **自定义属性** - 读写文件属性、配置管理、设计表
+- 🧭 **建模前复杂度评分** - 每次制作或修改机器人零部件前，先按 L1-L4 评分并等待用户确认
 - 👀 **结果自审查** - 导出多视角预览图、`review_report.json` 与 Markdown 摘要，帮助代理复核模型是否符合意图
 - 🔎 **API 查证优先** - 未封装接口先查官方 API Help / 本地 SDK，再实现、运行、自审查并沉淀
+
+### 🧭 建模前评分门禁
+
+本 skill 面向机器人零部件自动化建模。每次执行零件或装配体的建模、修改、重建或几何补全前，代理必须先读取 `references/robot-part-complexity-scoring.md`，按 8 个维度评估复杂度，给出 L1-L4 等级，并等待用户确认后再开始 SolidWorks 自检和建模。
+
+等级含义：
+
+- **L1**：Codex 可完全完成
+- **L2**：Codex 可完成，但需要人工确认
+- **L3**：Codex 只做辅助，大部分人工完成
+- **L4**：不建议 Codex 承担主体设计
+
+复杂自由曲面、A 面外观、人机曲面或高度拟真外壳若无法通过稳定 API 生成，直接按 L4 处理。
 
 ### 📋 环境要求
 
@@ -43,7 +57,7 @@
 #### 方式一：npx 一键安装（推荐）
 
 ```bash
-npx github:wzyn20051216/solidworks-automation-skill
+npx github:waziiiiii/solidworks-automation-skill
 ```
 
 自动下载并安装到 Claude/Codex/OpenClaw 等已检测到的 skills 目录，并自动尝试把 SolidWorks MCP 注册到 Codex、Claude Code、Claude Desktop、Cursor、Windsurf 等本地 AI 客户端。
@@ -55,8 +69,8 @@ npx github:wzyn20051216/solidworks-automation-skill
 OpenClaw 兼容本 skill 的 `SKILL.md + scripts/ + references/` 目录结构。推荐把技能放在以下任一目录：
 
 ```text
-~/.openclaw/skills/solidworks-automation/
-~/.agents/skills/solidworks-automation/
+~/.openclaw/skills/autolife-solidwork-skill/
+~/.agents/skills/autolife-solidwork-skill/
 ```
 
 安装后，可直接在 OpenClaw 中使用自然语言驱动 SolidWorks，例如：
@@ -74,7 +88,7 @@ references/openclaw.md
 #### 方式三：Claude CLI 安装
 
 ```bash
-claude skill add https://github.com/wzyn20051216/solidworks-automation-skill
+claude skill add https://github.com/waziiiiii/solidworks-automation-skill
 ```
 
 #### 方式四：手动克隆
@@ -88,8 +102,8 @@ pip install "pywin32>=305" "comtypes>=1.2.0"
 ##### 2. 克隆仓库
 
 ```bash
-git clone https://github.com/wzyn20051216/solidworks-automation-skill.git
-cd solidworks-automation-skill
+git clone https://github.com/waziiiiii/solidworks-automation-skill.git autolife-solidwork-skill
+cd autolife-solidwork-skill
 ```
 
 ##### 3. 运行示例
@@ -126,7 +140,7 @@ print("零件创建完成!")
 ### 📚 文档结构
 
 ```
-solidworks-automation-skill/
+autolife-solidwork-skill/
 ├── scripts/              # Python 脚本模块
 │   ├── sw_session.py    # 友好会话 API
 │   ├── sw_preflight.py  # 运行前自检、依赖补齐、SolidWorks 检测
@@ -182,7 +196,7 @@ claude mcp list
 - Cursor：写入 `~/.cursor/mcp.json`
 - Windsurf：写入 `~/.codeium/windsurf/mcp_config.json`
 
-> 通过 `npx github:wzyn20051216/solidworks-automation-skill` 安装时会自动运行注册器。若使用某些客户端的纯 skill 导入功能，客户端可能不会执行安装脚本，此时让 AI 运行上面的注册命令即可。
+> 通过 `npx github:waziiiiii/solidworks-automation-skill` 安装时会自动运行注册器。若使用某些客户端的纯 skill 导入功能，客户端可能不会执行安装脚本，此时让 AI 运行上面的注册命令即可。
 
 客户端手动配置示例：
 
@@ -382,14 +396,14 @@ model.Extension.SelectByID2(
 
 ### ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=wzyn20051216/solidworks-automation-skill&type=Date)](https://www.star-history.com/#wzyn20051216/solidworks-automation-skill&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=waziiiiii/solidworks-automation-skill&type=Date)](https://www.star-history.com/#waziiiiii/solidworks-automation-skill&Date)
 
 ### ❓ 常见问题
 
 #### OpenClaw 里没有识别到这个 skill？
 
 检查：
-1. 目录是否放在 `~/.openclaw/skills/solidworks-automation/` 或 `~/.agents/skills/solidworks-automation/`
+1. 目录是否放在 `~/.openclaw/skills/autolife-solidwork-skill/` 或 `~/.agents/skills/autolife-solidwork-skill/`
 2. 目录根下是否存在 `SKILL.md`
 3. 当前会话是否在安装后重新开始
 4. Python / `pywin32` / `comtypes` 是否已就绪；可先运行 `python scripts/sw_preflight.py`
@@ -444,8 +458,22 @@ model.Extension.SelectByID2(
 - ⚡ **Weldments** - Structural members, cut lists
 - 📊 **FEA Simulation** - Static, frequency, thermal analysis
 - 📝 **Custom Properties** - Read/write file properties, configuration management
+- 🧭 **Pre-Modeling Complexity Scoring** - Score robot parts from L1 to L4 and wait for user confirmation before modeling
 - 👀 **CAD Agent Self-Review** - Export multi-view previews, JSON reports, Markdown summaries, and `pass/warn/fail` evaluations
 - 🔎 **Verified API Workflow** - Look up official API Help or local SDK docs before using unwrapped SolidWorks APIs
+
+### 🧭 Pre-Modeling Scoring Gate
+
+This skill is optimized for robot-part CAD automation. Before any part or assembly modeling, modification, rebuild, or geometry completion task, the agent must read `references/robot-part-complexity-scoring.md`, score the target model across 8 dimensions, report an L1-L4 level, and wait for user confirmation before running SolidWorks preflight or generating CAD geometry.
+
+Level summary:
+
+- **L1**: Codex can complete the model
+- **L2**: Codex can complete it with human confirmation
+- **L3**: Codex should assist only; humans lead most design work
+- **L4**: Codex should not own the main design
+
+Complex freeform surfaces, Class-A appearance surfaces, ergonomic surfaces, or highly realistic shells that cannot be generated through stable APIs should be treated as L4.
 
 ### 📋 Requirements
 
@@ -459,7 +487,7 @@ model.Extension.SelectByID2(
 #### Option 1: Install with npx
 
 ```bash
-npx github:wzyn20051216/solidworks-automation-skill
+npx github:waziiiiii/solidworks-automation-skill
 ```
 
 This installs the skill into detected Claude/Codex/OpenClaw skill directories.
@@ -467,8 +495,8 @@ This installs the skill into detected Claude/Codex/OpenClaw skill directories.
 #### Option 2: Clone Manually
 
 ```bash
-git clone https://github.com/wzyn20051216/solidworks-automation-skill.git
-cd solidworks-automation-skill
+git clone https://github.com/waziiiiii/solidworks-automation-skill.git autolife-solidwork-skill
+cd autolife-solidwork-skill
 pip install "pywin32>=305" "comtypes>=1.2.0"
 python scripts/sw_preflight.py
 ```

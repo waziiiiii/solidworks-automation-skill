@@ -5,8 +5,8 @@ const path = require('path');
 const { execSync } = require('child_process');
 const os = require('os');
 
-const SKILL_NAME = 'solidworks-automation';
-const REPO_URL = 'https://github.com/wzyn20051216/solidworks-automation-skill.git';
+const SKILL_NAME = 'autolife-solidwork-skill';
+const REPO_URL = 'https://github.com/waziiiiii/solidworks-automation-skill.git';
 
 function shellQuote(value) {
   return `"${String(value).replace(/"/g, '\\"')}"`;
@@ -112,7 +112,7 @@ function registerMcpForAiClients(installedDirs) {
 }
 
 function install() {
-  console.log('🚀 安装 SolidWorks Automation Skill...\n');
+  console.log('🚀 安装 AutoLife SolidWorks Skill...\n');
 
   const skillsDirs = getAllSkillsDirs();
   console.log(`检测到 ${skillsDirs.length} 个 AI 工具目录:\n${skillsDirs.map(d => `  - ${d}`).join('\n')}\n`);
@@ -140,7 +140,7 @@ function install() {
     console.log(`\n✅ 成功安装到 ${successCount}/${skillsDirs.length} 个目录！`);
     console.log('\n使用方法:');
     console.log('  在 Claude/Codex/Cursor/OpenClaw 中提到 SolidWorks、OpenClaw、龙虾、CAD、3D建模等关键词');
-    console.log('  AI 会自动调用此 skill\n');
+    console.log('  AI 会自动调用 AutoLife SolidWorks skill\n');
 
     const primaryDir = selectPrimaryInstallDir(installedDirs);
     const registerAllScript = path.join(primaryDir, 'mcp-server', 'register_all_ai_mcp.ps1');
