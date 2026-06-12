@@ -1,7 +1,7 @@
 interface:
   display_name: "AutoLife SolidWorks"
-  short_description: "SolidWorks CAD automation with mandatory robot-part complexity scoring before modeling."
-  default_prompt: "Use $autolife-solidwork-skill to score robot-part modeling complexity first, wait for user confirmation, then create, edit, export, or troubleshoot SolidWorks CAD models with the AutoLife-optimized Python COM workflow."
+  short_description: "SolidWorks CAD automation with a mandatory 8-dimension robot-part scoring table before modeling."
+  default_prompt: "Use $autolife-solidwork-skill to output the mandatory 8-dimension robot-part complexity scoring table first, wait for user confirmation, then create, edit, export, or troubleshoot SolidWorks CAD models with the AutoLife-optimized Python COM workflow."
 
 policy:
   allow_implicit_invocation: true
