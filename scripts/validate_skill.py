@@ -1,5 +1,5 @@
 """
-验证 SolidWorks Automation Skill 的基础完整性。
+验证 AutoLife SolidWorks Skill 的基础完整性。
 
 该脚本不连接 SolidWorks，也不要求安装 pywin32；它只做静态检查，适合在提交前或
 CI 中快速发现语法错误、关键文件缺失、SKILL.md 元数据异常等问题。
@@ -40,6 +40,7 @@ REQUIRED_FILES = [
     "references/export.md",
     "references/review.md",
     "references/api-lookup.md",
+    "references/robot-part-complexity-scoring.md",
     "references/troubleshooting.md",
 ]
 
@@ -56,7 +57,7 @@ def check_skill_frontmatter():
     text = (ROOT / "SKILL.md").read_text(encoding="utf-8")
     if not text.startswith("---\n"):
         raise AssertionError("SKILL.md 必须以 YAML frontmatter 开头")
-    if "name: solidworks-automation" not in text:
+    if "name: autolife-solidwork-skill" not in text:
         raise AssertionError("SKILL.md 缺少正确的 name")
     if "description:" not in text:
         raise AssertionError("SKILL.md 缺少 description")

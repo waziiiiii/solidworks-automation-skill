@@ -1,4 +1,4 @@
-# SolidWorks Automation Skill
+# AutoLife SolidWorks Skill
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
@@ -40,7 +40,7 @@
 #### 方式一：npx 一键安装（推荐）
 
 ```bash
-npx github:wzyn20051216/solidworks-automation-skill
+npx github:AutoLifeRobot/solidworks-automation-skill
 ```
 
 自动下载并安装到 Claude/Codex/OpenClaw 等已检测到的 skills 目录，无需手动配置。
@@ -50,8 +50,8 @@ npx github:wzyn20051216/solidworks-automation-skill
 OpenClaw 兼容本 skill 的 `SKILL.md + scripts/ + references/` 目录结构。推荐把技能放在以下任一目录：
 
 ```text
-~/.openclaw/skills/solidworks-automation/
-~/.agents/skills/solidworks-automation/
+~/.openclaw/skills/autolife-solidwork-skill/
+~/.agents/skills/autolife-solidwork-skill/
 ```
 
 安装后，可直接在 OpenClaw 中使用自然语言驱动 SolidWorks，例如：
@@ -69,7 +69,7 @@ references/openclaw.md
 #### 方式三：Claude CLI 安装
 
 ```bash
-claude skill add https://github.com/wzyn20051216/solidworks-automation-skill
+claude skill add https://github.com/AutoLifeRobot/solidworks-automation-skill
 ```
 
 #### 方式四：手动克隆
@@ -83,8 +83,8 @@ pip install "pywin32>=305" "comtypes>=1.2.0"
 ##### 2. 克隆仓库
 
 ```bash
-git clone https://github.com/wzyn20051216/solidworks-automation-skill.git
-cd solidworks-automation-skill
+git clone https://github.com/AutoLifeRobot/solidworks-automation-skill.git
+cd autolife-solidwork-skill
 ```
 
 ##### 3. 运行示例
@@ -121,7 +121,7 @@ print("零件创建完成!")
 ### 📚 文档结构
 
 ```
-solidworks-automation-skill/
+autolife-solidwork-skill/
 ├── scripts/              # Python 脚本模块
 │   ├── sw_session.py    # 友好会话 API
 │   ├── sw_preflight.py  # 运行前自检、依赖补齐、SolidWorks 检测
@@ -303,14 +303,14 @@ model.Extension.SelectByID2(
 
 ### ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=wzyn20051216/solidworks-automation-skill&type=Date)](https://www.star-history.com/#wzyn20051216/solidworks-automation-skill&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=AutoLifeRobot/solidworks-automation-skill&type=Date)](https://www.star-history.com/#wzyn20051216/autolife-solidwork-skill&Date)
 
 ### ❓ 常见问题
 
 #### OpenClaw 里没有识别到这个 skill？
 
 检查：
-1. 目录是否放在 `~/.openclaw/skills/solidworks-automation/` 或 `~/.agents/skills/solidworks-automation/`
+1. 目录是否放在 `~/.openclaw/skills/autolife-solidwork-skill/` 或 `~/.agents/skills/autolife-solidwork-skill/`
 2. 目录根下是否存在 `SKILL.md`
 3. 当前会话是否在安装后重新开始
 4. Python / `pywin32` / `comtypes` 是否已就绪；可先运行 `python scripts/sw_preflight.py`
@@ -380,7 +380,7 @@ model.Extension.SelectByID2(
 #### Option 1: Install with npx
 
 ```bash
-npx github:wzyn20051216/solidworks-automation-skill
+npx github:AutoLifeRobot/solidworks-automation-skill
 ```
 
 This installs the skill into detected Claude/Codex/OpenClaw skill directories.
@@ -388,8 +388,8 @@ This installs the skill into detected Claude/Codex/OpenClaw skill directories.
 #### Option 2: Clone Manually
 
 ```bash
-git clone https://github.com/wzyn20051216/solidworks-automation-skill.git
-cd solidworks-automation-skill
+git clone https://github.com/AutoLifeRobot/solidworks-automation-skill.git
+cd autolife-solidwork-skill
 pip install "pywin32>=305" "comtypes>=1.2.0"
 python scripts/sw_preflight.py
 ```

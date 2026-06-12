@@ -1,10 +1,10 @@
 ---
-name: solidworks-automation
-description: "SolidWorks CAD 自动化技能，可通过 Python COM 接口与 OpenClaw / Codex / Claude 协作控制 Windows 上运行的 SolidWorks，用于零件建模、装配体、工程图、钣金、焊件、仿真、文件导出、自定义属性、设计表与配置管理；当用户提到 SolidWorks、SW、OpenClaw、龙虾、3D 建模、CAD、零件、装配、工程图、钣金、焊件、导出 STEP/STL/PDF、BOM、设计表或 FEA 仿真等需求时使用。"
-metadata: { "openclaw": { "homepage": "https://github.com/wzyn20051216/solidworks-automation-skill", "os": ["win32"], "requires": { "anyBins": ["python", "py"] } } }
+name: autolife-solidwork-skill
+description: "AutoLife SolidWorks 自动化技能，强化机器人零部件建模前复杂度评分、前台建模、旋转切除、选边倒角和轴套类零件流程；用于 SolidWorks 零件、装配、工程图、导出和 CAD 自动化排障。每次执行零件或装配体建模/修改前，先按评分表评估模型难度并等待用户确认，再开始制作模型。"
+metadata: { "short-description": "AutoLife optimized SW CAD workflow", "openclaw": { "homepage": "https://github.com/AutoLifeRobot/solidworks-automation-skill", "os": ["win32"], "requires": { "anyBins": ["python", "py"] } } }
 ---
 
-# SolidWorks 自动化技能
+# AutoLife SolidWorks 自动化技能
 
 ## 快速开始
 
@@ -12,7 +12,7 @@ metadata: { "openclaw": { "homepage": "https://github.com/wzyn20051216/solidwork
 
 - Windows 系统 + SolidWorks 已安装并运行
 - Python 3.8+ + `pywin32` / `comtypes`
-- 如果通过 OpenClaw 使用，确保技能目录位于 `~/.openclaw/skills/solidworks-automation/` 或 `~/.agents/skills/solidworks-automation/`
+- 如果通过 OpenClaw 使用，确保技能目录位于 `~/.openclaw/skills/autolife-solidwork-skill/` 或 `~/.agents/skills/autolife-solidwork-skill/`
 
 ### 入口自检
 
@@ -57,6 +57,7 @@ session.export(model, r"C:\temp\cylinder.step")
 | 需求 | 脚本 | 参考文档 |
 |---|---|---|
 | 入口自检与依赖补齐 | `scripts/sw_preflight.py` | `references/troubleshooting.md` |
+| 机器人零部件建模前复杂度评分 | - | `references/robot-part-complexity-scoring.md` |
 | 多模型宏生成防护 | `scripts/sw_macro_guard.py` | `references/openclaw.md` |
 | 友好会话 API | `scripts/sw_session.py` | - |
 | 连接与文档管理 | `scripts/sw_connect.py` | - |
@@ -87,14 +88,42 @@ from sw_connect import connect_solidworks, mm, deg, new_document
 5. 生成或修改模型后必须做结果自审查：导出至少一个等轴测预览图，必要时导出前/俯/右视图，并通过截图或 BMP 目视检查几何是否符合用户意图。
 6. 如果需要更完整的 OpenClaw 工作流、提示词示例和排障建议，再读取 `references/openclaw.md`。
 
+## 建模前评分门禁
+
+每次使用本技能处理零件或装配体的建模、修改、重建、导入后再建模、工程图出图前的模型补全，或任何会改变 CAD 几何的任务时，必须先执行复杂度评分门禁。不得在用户确认前运行 SolidWorks 自检、启动/连接 SolidWorks、生成建模脚本、修改模型、保存或导出模型。
+
+**硬性规则**：必须等待用户确认继续；未收到明确确认前，只能评分、解释评分依据、补充询问输入信息，不能开始制作模型。
+
+1. 先读取 `references/robot-part-complexity-scoring.md`。
+2. 根据用户提供的文字、图片、草图、旧模型、尺寸、装配约束和用途，对目标模型按 8 个维度评分。
+3. 向用户汇报总分、等级、逐项得分、主要理由、Codex 可承担内容、需要人工确认内容、工程风险标签，以及是否触发一票否决。
+4. 明确询问用户是否确认按该等级继续建模。
+5. 只有用户明确确认继续后，才进入 SolidWorks 自检和正式建模流程。
+
+例外：如果用户只要求评分、解释、评审、排障、更新 skill 或整理文档，不需要等待建模确认；但只要下一步要制作或修改模型，就必须重新执行评分门禁。
+
 ## 使用流程
 
-1. 先运行 `sw_preflight.py`：缺依赖则请求用户授权自动安装；缺 SolidWorks 则停止并提示手动安装。
-2. 优先用 `SolidWorksSession()` 管理连接、打开、新建、保存、导出。
-3. 需要底层控制时再组合 `sw_connect.py`、`sw_part.py` 等函数。
-4. 如果必须由大模型生成 VBA 宏，先使用 `sw_macro_guard.py` 做模型分流、代码校验、重试和本地模板兜底。
-5. 使用 `session.export()` 或 `sw_export.py` 保存/导出文件。
-6. 使用 `sw_review.py` 导出预览图并自审查；如果有 GUI/桌面截图能力，打开 SolidWorks 视图截图复核。
+1. 对所有模型制作或修改任务，先完成“建模前评分门禁”，并等待用户确认继续。
+2. 再运行 `sw_preflight.py`：缺依赖则请求用户授权自动安装；缺 SolidWorks 则停止并提示手动安装。
+3. 优先用 `SolidWorksSession()` 管理连接、打开、新建、保存、导出。
+4. 需要底层控制时再组合 `sw_connect.py`、`sw_part.py` 等函数。
+5. 如果必须由大模型生成 VBA 宏，先使用 `sw_macro_guard.py` 做模型分流、代码校验、重试和本地模板兜底。
+6. 使用 `session.export()` 或 `sw_export.py` 保存/导出文件。
+7. 使用 `sw_review.py` 导出预览图并自审查；如果有 GUI/桌面截图能力，打开 SolidWorks 视图截图复核。
+
+## 实战稳定性规则
+
+以下规则来自真实建模排障，遇到轴套、法兰、回转件、贯穿槽、内孔环槽等任务时优先遵循：
+
+1. **用户要求看绘制过程时，先保证前台 GUI 可见**：`SolidWorksSession(visible=True)` 不一定能得到有窗口句柄的前台实例。必要时先启动真实 `SLDWORKS.exe`，将窗口置前，再连接 `SldWorks.Application`；脚本中设置 `sw.Visible = True`、`sw.UserControl = True`，并在关键特征后调用 `ForceRebuild3(False)`、`ViewZoomtofit2()`、`GraphicsRedraw2()`，短暂停顿，让用户能看到外形、孔、槽、倒角逐步出现。
+2. **轴套/法兰类零件优先采用稳定建模顺序**：先用旋转特征生成外部实心轮廓；再切法兰孔、端面异形贯穿槽等非轴对称特征；最后用旋转切除生成中心孔、内孔台阶、内侧环槽。不要过早切掉中心孔，否则后续与内孔相交的花瓣槽、R 槽或局部贯穿槽更容易失败。
+3. **旋转切除优先使用专用接口**：旋转实体可用 `FeatureRevolve2`，但旋转切除不要只依赖 `FeatureRevolve2(..., IsCut=True, ...)`。在部分 SolidWorks 版本或 pywin32 COM 环境中该写法可能不返回特征；应优先尝试 `FeatureRevolveCut2(...)`，并检查返回值是否为 `None`。若方法名或参数不确定，先用最小脚本探测当前 `FeatureManager` 是否暴露该成员，再执行正式建模。
+4. **用包围盒确认真实轴向和方位**：旋转草图所在平面与模型全局轴向可能不符合直觉。端面切孔、偏置面、贯穿方向失败时，先调用 `model.GetPartBox(True)` 确认实体实际范围和轴向，再决定从哪个平面或端面建草图。
+5. **选面选边要选真实几何，不只依赖默认基准面名称**：中英文基准面兜底只能解决默认平面名称问题；端面孔、槽口、局部倒角等应优先用 `SelectByRay` 选择真实面/边。射线命中点必须落在材料区域，避开已经切出的孔、槽和空腔；例如法兰端面二次建草图时，选两孔之间的实体区域比选孔中心更稳定。
+6. **保存覆盖前关闭同名旧文档**：如果目标 `.SLDPRT` 已在当前 SolidWorks 中打开，`SaveAs` 可能返回错误码 `1`。覆盖保存前先尝试 `sw.CloseDoc(title)` 关闭同名文档，保存后再检查返回值、文件存在性和文件大小。
+7. **倒角策略要分层处理**：不要默认一次性选择所有边做 C2 倒角。对回转体外缘、内孔口、内槽边，优先直接画进旋转截面；对规则孔口，可用 `SelectByRay` 精确选边后调用 `InsertFeatureChamfer`；对花瓣槽、相交槽、复杂贯穿槽口，自动倒角可能失败，应降级为局部可建倒角或明确报告未能生成的边。
+8. **COM 选择对象要有兼容兜底**：`SelectionManager.CreateSelectData()` 在部分环境中可能找不到成员。批量选边失败时，改用 `SelectByRay`、`edge.Select(True)` 或重新选择草图/特征；每次特征调用后都检查返回对象，失败时不要继续假设特征已经存在。
 
 ## GPT / Kimi / Claude 多模型策略
 
@@ -151,6 +180,17 @@ report, report_path = run_review(
 print(report_path)
 print(report["evaluation"])
 ```
+
+## 建模后自我迭代
+
+每次完成 SolidWorks 建模、修改、导入、工程图或导出任务后，在完成“结果自审查”之后执行自我迭代记录。所有自我迭代相关文件必须统一写入 `D:\codex_iterative_learning\AutoLife-solidwork-iteration`，不要写入 skill 安装目录或临时工作目录。
+
+1. **固定学习根目录**：使用 `D:\codex_iterative_learning\AutoLife-solidwork-iteration` 作为唯一自我迭代根目录；若目录不存在，先创建 `cases`、`artifacts`、`proposals`、`scripts` 子目录。
+2. **每次任务都要留痕**：建模成功、部分成功、失败或用户中断，都要向 `iteration-log.md` 追加一条记录；确实没有新经验时写明“无新增可沉淀经验”。
+3. **按任务建案例文件夹**：复杂任务或出现失败重试时，在 `cases\YYYYMMDD-HHMMSS-brief-slug\` 下保存 `summary.md`，并把关键宏、Python 脚本、预览图、错误日志、审查报告复制或记录到该案例目录。
+4. **候选规则先隔离**：新的 API 坑、SolidWorks 版本差异、选边/倒角/旋转切除稳定写法，先写入 `candidate-rules.md` 或 `proposals\YYYYMMDD-brief-title.md`，不要直接自动改 `SKILL.md`。
+5. **满足条件再沉淀进 skill**：只有同类问题重复出现至少 2 次，或一次问题已被真实运行验证为通用规则，并且用户明确要求优化 skill 时，才把候选规则整理进 `D:\codex_iterative_learning\AutoLife-solidwork-skill\SKILL.md`；修改后必须重新校验并按需重新安装。
+6. **记录要短而可复用**：每条复盘优先包含任务类型、图纸/输入、输出文件、SolidWorks 版本、成功路径、失败 API、修复方式、是否建议升级为 skill 规则。不要记录许可证、账号、私密路径以外的敏感信息。
 
 ## 关键注意事项
 
