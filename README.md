@@ -23,8 +23,22 @@
 - ⚡ **焊件设计** - 结构构件、切割清单
 - 📊 **FEA 仿真** - 静态分析、频率分析、热分析
 - 📝 **自定义属性** - 读写文件属性、配置管理、设计表
+- 🧭 **建模前复杂度评分** - 每次制作或修改机器人零部件前，先按 L1-L4 评分并等待用户确认
 - 👀 **结果自审查** - 导出多视角预览图、`review_report.json` 与 Markdown 摘要，帮助代理复核模型是否符合意图
 - 🔎 **API 查证优先** - 未封装接口先查官方 API Help / 本地 SDK，再实现、运行、自审查并沉淀
+
+### 🧭 建模前评分门禁
+
+本 skill 面向机器人零部件自动化建模。每次执行零件或装配体的建模、修改、重建或几何补全前，代理必须先读取 `references/robot-part-complexity-scoring.md`，按 8 个维度评估复杂度，给出 L1-L4 等级，并等待用户确认后再开始 SolidWorks 自检和建模。
+
+等级含义：
+
+- **L1**：Codex 可完全完成
+- **L2**：Codex 可完成，但需要人工确认
+- **L3**：Codex 只做辅助，大部分人工完成
+- **L4**：不建议 Codex 承担主体设计
+
+复杂自由曲面、A 面外观、人机曲面或高度拟真外壳若无法通过稳定 API 生成，直接按 L4 处理。
 
 ### 📋 环境要求
 
@@ -83,7 +97,7 @@ pip install "pywin32>=305" "comtypes>=1.2.0"
 ##### 2. 克隆仓库
 
 ```bash
-git clone https://github.com/AutoLifeRobot/solidworks-automation-skill.git
+git clone https://github.com/AutoLifeRobot/solidworks-automation-skill.git autolife-solidwork-skill
 cd autolife-solidwork-skill
 ```
 
@@ -303,7 +317,7 @@ model.Extension.SelectByID2(
 
 ### ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=AutoLifeRobot/solidworks-automation-skill&type=Date)](https://www.star-history.com/#wzyn20051216/autolife-solidwork-skill&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=AutoLifeRobot/solidworks-automation-skill&type=Date)](https://www.star-history.com/#AutoLifeRobot/solidworks-automation-skill&Date)
 
 ### ❓ 常见问题
 
@@ -365,8 +379,22 @@ model.Extension.SelectByID2(
 - ⚡ **Weldments** - Structural members, cut lists
 - 📊 **FEA Simulation** - Static, frequency, thermal analysis
 - 📝 **Custom Properties** - Read/write file properties, configuration management
+- 🧭 **Pre-Modeling Complexity Scoring** - Score robot parts from L1 to L4 and wait for user confirmation before modeling
 - 👀 **CAD Agent Self-Review** - Export multi-view previews, JSON reports, Markdown summaries, and `pass/warn/fail` evaluations
 - 🔎 **Verified API Workflow** - Look up official API Help or local SDK docs before using unwrapped SolidWorks APIs
+
+### 🧭 Pre-Modeling Scoring Gate
+
+This skill is optimized for robot-part CAD automation. Before any part or assembly modeling, modification, rebuild, or geometry completion task, the agent must read `references/robot-part-complexity-scoring.md`, score the target model across 8 dimensions, report an L1-L4 level, and wait for user confirmation before running SolidWorks preflight or generating CAD geometry.
+
+Level summary:
+
+- **L1**: Codex can complete the model
+- **L2**: Codex can complete it with human confirmation
+- **L3**: Codex should assist only; humans lead most design work
+- **L4**: Codex should not own the main design
+
+Complex freeform surfaces, Class-A appearance surfaces, ergonomic surfaces, or highly realistic shells that cannot be generated through stable APIs should be treated as L4.
 
 ### 📋 Requirements
 
@@ -388,7 +416,7 @@ This installs the skill into detected Claude/Codex/OpenClaw skill directories.
 #### Option 2: Clone Manually
 
 ```bash
-git clone https://github.com/AutoLifeRobot/solidworks-automation-skill.git
+git clone https://github.com/AutoLifeRobot/solidworks-automation-skill.git autolife-solidwork-skill
 cd autolife-solidwork-skill
 pip install "pywin32>=305" "comtypes>=1.2.0"
 python scripts/sw_preflight.py
